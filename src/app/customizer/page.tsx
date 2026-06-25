@@ -2,8 +2,21 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { CatalogService } from "@/app/customizer/catalog.service";
+import { useEffect, useState } from "react";
+import { type ICatalog } from "@/app/customizer/catalog.types";
 
 export default function CustomizerPage() {
+  const [catalogItems, setCatalogItems] = useState<ICatalog[]>([]);
+  useEffect(() => {
+    async function fetchData(): Promise<void> {
+      const catalogList: ICatalog[] = await CatalogService.getAll();
+      setCatalogItems(catalogList);
+    }
+
+    fetchData();
+  }, []);
+
   return (
     <div className="flex flex-1 font-sans items-center justify-center">
       <main className="flex w-full max-w-3xl flex-col items-center">
@@ -12,25 +25,17 @@ export default function CustomizerPage() {
         </h1>
 
         <div className="flex w-full items-center justify-center gap-4">
-          <Link href={"/customizer/bus"}>
-            <Image
-              className="rounded"
-              src={"/bus.png"}
-              alt="Bus image"
-              width={200}
-              height={100}
-            />
-          </Link>
-
-          <Link href={"/customizer/lotus"}>
-            <Image
-              className="rounded"
-              src={"/lotus.png"}
-              alt="Lotus image"
-              width={200}
-              height={100}
-            />
-          </Link>
+          {catalogItems.map(({ _id, name, slug, previewUrl }) => (
+            <Link key={_id} href={`/customizer/${slug}`}>
+              <Image
+                className="rounded"
+                src={`${previewUrl}`}
+                alt={name}
+                width={300}
+                height={100}
+              />
+            </Link>
+          ))}
         </div>
       </main>
     </div>

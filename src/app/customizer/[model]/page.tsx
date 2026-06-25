@@ -6,52 +6,17 @@ import {
   Environment,
   OrbitControls,
   PerspectiveCamera,
-  useGLTF,
-  Center,
 } from "@react-three/drei";
 import { useControls } from "leva";
 import { useParams } from "next/navigation";
-import { Suspense } from "react";
-
-const MODELS_MAP: Record<string, string> = {
-  lotus: "lotus.glb",
-  bus: "bus.glb",
-};
-
-function CarModel({
-  modelId,
-  paintColor,
-}: {
-  modelId: string;
-  paintColor: string;
-}) {
-  const fileName = MODELS_MAP[modelId] || MODELS_MAP["lotus"];
-  const { scene } = useGLTF(`/models/${fileName}`);
-
-  const handlePointerDown = (e: any) => {
-    e.stopPropagation();
-
-    if (e.object.isMesh) {
-      e.object.material.color.set(paintColor);
-    }
-  };
-
-  return (
-    <Center top>
-      <primitive
-        object={scene}
-        scale={1.5}
-        onClick={handlePointerDown}
-        onPointerOver={() => (document.body.style.cursor = "pointer")}
-        onPointerOut={() => (document.body.style.cursor = "auto")}
-      />
-    </Center>
-  );
-}
+import { Suspense, useEffect, useState } from "react";
+import { CatalogService } from "@/app/customizer/catalog.service";
+import CarModel from "@/app/customizer/[model]/CarModel";
 
 export default function CustomizerModelPage() {
   const params = useParams();
-  const modelName = params.model as string;
+  const modelSlug = params.model as string;
+  const [modelUrl, setModelUrl] = useState<string | null>(null);
 
   const { backgroundColor, paintColor, intensity, envIntensity } = useControls({
     backgroundColor: "#4b5563",
@@ -59,6 +24,15 @@ export default function CustomizerModelPage() {
     intensity: { value: 0.5, min: 0.1, max: 2, step: 0.1 },
     envIntensity: { value: 0.5, min: 0, max: 1, step: 0.1 },
   });
+
+  useEffect(() => {
+    async function fetchModel(): Promise<void> {
+      const catalogItem = await CatalogService.getBySlug(modelSlug);
+      setModelUrl(catalogItem.modelUrl);
+    }
+
+    fetchModel();
+  }, [modelSlug]);
 
   return (
     <main className="fixed inset-0 w-full h-full">
@@ -78,18 +52,20 @@ export default function CustomizerModelPage() {
           intensity={intensity}
         />
 
-        <Suspense fallback={null}>
-          <CarModel modelId={modelName} paintColor={paintColor} />
+        {modelUrl && (
+          <Suspense fallback={null}>
+            <CarModel modelUrl={modelUrl} paintColor={paintColor} />
 
-          <Environment preset="city" environmentIntensity={envIntensity} />
+            <Environment preset="city" environmentIntensity={envIntensity} />
 
-          <ContactShadows
-            position={[0, 0, 0]}
-            opacity={0.4}
-            scale={10}
-            blur={2}
-          />
-        </Suspense>
+            <ContactShadows
+              position={[0, 0, 0]}
+              opacity={0.4}
+              scale={10}
+              blur={2}
+            />
+          </Suspense>
+        )}
 
         <OrbitControls
           makeDefault
