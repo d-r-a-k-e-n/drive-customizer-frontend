@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { type ThreeEvent } from "@react-three/fiber";
 import { Center, useGLTF } from "@react-three/drei";
 import { Mesh, MeshStandardMaterial } from "three";
+
+interface IModelConfig {
+  id: number;
+  color: string;
+}
 
 export default function CarModel({
   modelUrl,
@@ -10,9 +15,21 @@ export default function CarModel({
   modelUrl: string;
   paintColor: string;
 }) {
+  const MODEL_CONFIG_KEY = "model-config";
+
+  const [modelConfig, setModelConfig] = useState<IModelConfig[]>(() => {
+    const saved = localStorage.getItem(MODEL_CONFIG_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
   const { scene } = useGLTF(modelUrl);
 
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    if (modelConfig.length > 0) {
+      localStorage.setItem(MODEL_CONFIG_KEY, JSON.stringify(modelConfig));
+    }
+  }, [modelConfig]);
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     setStartPos({ x: e.clientX, y: e.clientY });
@@ -34,6 +51,27 @@ export default function CarModel({
       if (material instanceof MeshStandardMaterial) {
         material.color.set(paintColor);
       }
+
+      setModelConfig((prev) => {
+        const existingIndex = prev.findIndex((item) => item.id === material.id);
+
+        if (existingIndex !== -1) {
+          const updated = [...prev];
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            color: material.color.getHexString(),
+          };
+          return updated;
+        }
+
+        return [
+          ...prev,
+          {
+            id: material.id,
+            color: material.color.getHexString(),
+          },
+        ];
+      });
     }
   };
 

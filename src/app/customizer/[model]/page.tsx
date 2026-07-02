@@ -10,8 +10,10 @@ import {
 import { useControls } from "leva";
 import { useParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { CatalogService } from "@/app/customizer/catalog.service";
+import { catalogService } from "@/services/catalog.service";
 import CarModel from "@/app/customizer/[model]/CarModel";
+import { modelConfigService } from "@/services/modelConfigs.services";
+import { ICreateModelConfig } from "@/types/modelConfig.types";
 
 export default function CustomizerModelPage() {
   const params = useParams();
@@ -27,12 +29,27 @@ export default function CustomizerModelPage() {
 
   useEffect(() => {
     async function fetchModel(): Promise<void> {
-      const catalogItem = await CatalogService.getBySlug(modelSlug);
+      const catalogItem = await catalogService.getBySlug(modelSlug);
       setModelUrl(catalogItem.modelUrl);
     }
 
     fetchModel();
   }, [modelSlug]);
+
+  function createModelConfig() {
+    const test: ICreateModelConfig = {
+      name: "",
+      modelId: "",
+      config: [
+        {
+          meshId: "",
+          color: "",
+        },
+      ],
+    };
+
+    modelConfigService.create(test);
+  }
 
   return (
     <main className="fixed inset-0 w-full h-full">
@@ -77,6 +94,12 @@ export default function CustomizerModelPage() {
           maxPolarAngle={Math.PI / 2.1}
         />
       </Canvas>
+      <button
+        className="absolute top-4 left-8 cursor-pointer bg-amber-600"
+        onClick={() => createModelConfig()}
+      >
+        save
+      </button>
     </main>
   );
 }

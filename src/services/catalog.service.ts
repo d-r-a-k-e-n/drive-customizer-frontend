@@ -1,11 +1,8 @@
 import axios from "axios";
-import {
-  type ICatalog,
-  type ICatalogResponse,
-} from "@/app/customizer/catalog.types";
+import { type ICatalog, type ICatalogResponse } from "@/types/catalog.types";
 const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/catalogs`;
 
-export const CatalogService = {
+export const catalogService = {
   getAll: async (): Promise<ICatalog[]> => {
     try {
       const response = await axios.get<ICatalogResponse>(BASE_URL);

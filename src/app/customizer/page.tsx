@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { CatalogService } from "@/app/customizer/catalog.service";
+import { catalogService } from "@/services/catalog.service";
 import { useEffect, useState } from "react";
-import { type ICatalog } from "@/app/customizer/catalog.types";
+import { type ICatalog } from "@/types/catalog.types";
 
 export default function CustomizerPage() {
   const [catalogItems, setCatalogItems] = useState<ICatalog[]>([]);
   useEffect(() => {
     async function fetchData(): Promise<void> {
-      const catalogList: ICatalog[] = await CatalogService.getAll();
+      const catalogList: ICatalog[] = await catalogService.getAll();
       setCatalogItems(catalogList);
     }
 
