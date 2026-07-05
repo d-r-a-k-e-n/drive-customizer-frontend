@@ -12,13 +12,15 @@ import { useParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { catalogService } from "@/services/catalog.service";
 import CarModel from "@/app/customizer/[model]/CarModel";
-import { modelConfigService } from "@/services/modelConfigs.services";
-import { ICreateModelConfig } from "@/types/modelConfig.types";
+import { useModelConfigStore } from "@/store/modelConfig.store";
 
 export default function CustomizerModelPage() {
   const params = useParams();
   const modelSlug = params.model as string;
   const [modelUrl, setModelUrl] = useState<string | null>(null);
+  const { getModelStore, resetModelStore } = useModelConfigStore(
+    (store) => store,
+  );
 
   const { backgroundColor, paintColor, intensity, envIntensity } = useControls({
     backgroundColor: "#4b5563",
@@ -37,18 +39,7 @@ export default function CustomizerModelPage() {
   }, [modelSlug]);
 
   function createModelConfig() {
-    const test: ICreateModelConfig = {
-      name: "",
-      modelId: "",
-      config: [
-        {
-          meshId: "",
-          color: "",
-        },
-      ],
-    };
-
-    modelConfigService.create(test);
+    console.log(getModelStore());
   }
 
   return (
@@ -94,12 +85,20 @@ export default function CustomizerModelPage() {
           maxPolarAngle={Math.PI / 2.1}
         />
       </Canvas>
-      <button
-        className="absolute top-4 left-8 cursor-pointer bg-amber-600"
-        onClick={() => createModelConfig()}
-      >
-        save
-      </button>
+      <div className="absolute top-4 left-8 flex gap-4">
+        {/* <button
+          className="cursor-pointer bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 text-zinc-300 hover:text-white px-4 py-1.5 rounded-md text-xs font-medium transition-all tracking-wide uppercase"
+          onClick={() => createModelConfig()}
+        >
+          save
+        </button> */}
+        <button
+          className="cursor-pointer bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 text-zinc-300 hover:text-white px-4 py-1.5 rounded-md text-xs font-medium transition-all tracking-wide uppercase"
+          onClick={() => resetModelStore()}
+        >
+          reset
+        </button>
+      </div>
     </main>
   );
 }
