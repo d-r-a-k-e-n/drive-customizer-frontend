@@ -3,52 +3,70 @@ import { type ThreeEvent } from "@react-three/fiber";
 import { Center, useGLTF } from "@react-three/drei";
 import { Mesh, MeshStandardMaterial } from "three";
 import { useModelConfigStore } from "@/store/modelConfig.store";
+import { type IModelConfigItem } from "@/types/modelConfig.types";
+import {BACKGROUND_COLOR} from "@/consts/backgroundColor.const";
 
 interface ICarModelProps {
   modelUrl: string;
-  paintColor: string;
+  paintColor?: string;
+  config?: IModelConfigItem[];
+  readOnly?: boolean;
 }
 
-export default function CarModel({ modelUrl, paintColor }: ICarModelProps) {
+export default function CarModel({
+  modelUrl,
+  paintColor = BACKGROUND_COLOR,
+  config: configProp,
+  readOnly = false,
+}: ICarModelProps) {
   const { scene } = useGLTF(modelUrl);
+
+  const { setModelStore, config: storeConfig } = useModelConfigStore(
+    (state) => state,
+  );
+  const config = configProp ?? storeConfig;
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
 
-  const { config, setModelStore } = useModelConfigStore((state) => state);
-
   const originalColors = useMemo(() => {
-    const colorsMap = new Map();
+    const colorsMap = new Map<string, MeshStandardMaterial["color"]>();
     scene.traverse((object) => {
       if (
         object instanceof Mesh &&
         object.material instanceof MeshStandardMaterial
       ) {
-        colorsMap.set(object.uuid, object.material.color.clone());
+        colorsMap.set(object.name, object.material.color.clone());
       }
     });
     return colorsMap;
   }, [scene]);
 
   useEffect(() => {
-    if (config.length === 0) {
-      scene.traverse((object) => {
-        if (
-          object instanceof Mesh &&
-          object.material instanceof MeshStandardMaterial
-        ) {
-          const initialColor = originalColors.get(object.uuid);
-          if (initialColor) {
-            object.material.color.copy(initialColor);
-          }
-        }
-      });
-    }
-  }, [config, scene, originalColors]);
+    scene.traverse((object) => {
+      if (
+        object instanceof Mesh &&
+        object.material instanceof MeshStandardMaterial
+      ) {
+        const configItem = config.find((item) => item.meshId === object.name);
 
+        if (configItem) {
+          object.material.color.set(configItem.color);
+          return;
+        }
+
+        const initialColor = originalColors.get(object.name);
+        if (initialColor) {
+          object.material.color.copy(initialColor);
+        }
+      }
+    });
+  }, [config, scene, originalColors]);
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     setStartPos({ x: e.clientX, y: e.clientY });
   };
 
   const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
+    if (readOnly) return;
+
     e.stopPropagation();
 
     const diffX = Math.abs(e.clientX - startPos.x);
@@ -63,7 +81,7 @@ export default function CarModel({ modelUrl, paintColor }: ICarModelProps) {
         const newColorHex = paintColor;
         material.color.set(newColorHex);
 
-        const meshId = e.object.uuid;
+        const meshId = e.object.name;
 
         const existingIndex = config.findIndex(
           (item) => item.meshId === meshId,
@@ -89,7 +107,7 @@ export default function CarModel({ modelUrl, paintColor }: ICarModelProps) {
         object={scene}
         scale={1.5}
         onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
+        onPointerUp={readOnly ? undefined : handlePointerUp}
       />
     </Center>
   );
