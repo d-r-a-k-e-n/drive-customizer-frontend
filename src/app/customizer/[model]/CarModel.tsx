@@ -4,7 +4,7 @@ import { Center, useGLTF } from "@react-three/drei";
 import { Mesh, MeshStandardMaterial } from "three";
 import { useModelConfigStore } from "@/store/modelConfig.store";
 import { type IModelConfigItem } from "@/types/modelConfig.types";
-import {BACKGROUND_COLOR} from "@/consts/backgroundColor.const";
+import { BACKGROUND_COLOR } from "@/consts/backgroundColor.const";
 
 interface ICarModelProps {
   modelUrl: string;

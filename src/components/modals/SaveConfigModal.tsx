@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useModelConfigStore } from "@/store/modelConfig.store";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface ISaveConfigModalProps {
   isOpen: boolean;
@@ -42,14 +44,13 @@ export default function SaveConfigModal({
         </p>
 
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
+          <Input
             placeholder="Configuration name"
             autoFocus
             disabled={isSaving}
-            className="mb-4 w-full rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:border-white/20 focus:outline-none disabled:opacity-50"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            type="text"
           />
 
           {error && (
@@ -59,21 +60,13 @@ export default function SaveConfigModal({
           )}
 
           <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              className="cursor-pointer rounded-md border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-wide text-zinc-300 transition-all hover:bg-white/10 hover:text-white disabled:opacity-50"
-              onClick={onCancel}
-              disabled={isSaving}
-            >
+            <Button onClick={onCancel} disabled={isSaving}>
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="cursor-pointer rounded-md border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-wide text-white transition-all hover:bg-white/20 disabled:opacity-50"
-              disabled={isSaving || !name.trim()}
-            >
+            </Button>
+
+            <Button type="submit" disabled={isSaving || !name.trim()}>
               {isSaving ? "Saving..." : "Save"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

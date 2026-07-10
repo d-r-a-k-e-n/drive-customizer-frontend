@@ -19,6 +19,7 @@ import SaveConfigModal from "@/components/modals/SaveConfigModal";
 import SaveSuccessModal from "@/components/modals/SaveSuccessModal";
 import { useModelConfigStore } from "@/store/modelConfig.store";
 import { BACKGROUND_COLOR } from "@/consts/backgroundColor.const";
+import { Button } from "@/components/ui/button";
 
 export default function CustomizerModelPage() {
   const params = useParams();
@@ -178,19 +179,17 @@ export default function CustomizerModelPage() {
       </Canvas>
 
       <div className="absolute top-4 left-8 flex items-center gap-4">
-        <button
-          className="cursor-pointer bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 text-zinc-300 hover:text-white px-4 py-1.5 rounded-md text-xs font-medium transition-all tracking-wide uppercase disabled:opacity-50"
+        <Button
+          variant="default"
           onClick={handleSaveClick}
           disabled={isSaving || !modelId}
         >
           save
-        </button>
-        <button
-          className="cursor-pointer bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 text-zinc-300 hover:text-white px-4 py-1.5 rounded-md text-xs font-medium transition-all tracking-wide uppercase"
-          onClick={() => setIsResetModalOpen(true)}
-        >
+        </Button>
+
+        <Button variant="default" onClick={() => setIsResetModalOpen(true)}>
           reset
-        </button>
+        </Button>
       </div>
 
       <ConfirmModal

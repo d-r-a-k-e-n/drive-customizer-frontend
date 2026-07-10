@@ -7,6 +7,7 @@ import { catalogService } from "@/services/catalog.service";
 import { modelConfigService } from "@/services/modelConfigs.services";
 import { type ICatalog } from "@/types/catalog.types";
 import { type IModelConfig } from "@/types/modelConfig.types";
+import { ROUTS } from "@/consts/routs.const";
 
 export default function ViewerPage() {
   const [customizedModels, setCustomizedModels] = useState<
@@ -41,9 +42,9 @@ export default function ViewerPage() {
   }, []);
 
   return (
-    <div className="flex flex-1 font-sans items-center justify-center py-10">
-      <main className="flex w-full max-w-5xl flex-col items-center px-4">
-        <h1 className="mb-10 uppercase font-bold text-6xl">
+    <div className="flex flex-1 font-sans justify-center">
+      <main className="flex w-full max-w-5xl flex-col items-center">
+        <h1 className="mb-6 uppercase font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-center md:text-left">
           Customized models
         </h1>
 
@@ -59,9 +60,9 @@ export default function ViewerPage() {
           </p>
         )}
 
-        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid pb-6 px-6 p-10 w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {customizedModels.map(({ _id, name, previewUrl }) => (
-            <Link key={_id} href={`/viewer/${_id}`}>
+            <Link key={_id} href={`${ROUTS.VIEWER_ROUTE}/${_id}`}>
               <article className="overflow-hidden rounded-lg border border-white/10 bg-white/5 transition-all hover:border-white/20 hover:bg-white/10">
                 {previewUrl ? (
                   <Image

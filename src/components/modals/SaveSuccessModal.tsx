@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { ROUTS } from "@/consts/routs.const";
 
 interface ISaveSuccessModalProps {
   isOpen: boolean;
@@ -57,7 +58,7 @@ export default function SaveSuccessModal({
           </button>
 
           <Link
-            href="/"
+            href={ROUTS.MAIN_ROUTE}
             className="text-center cursor-pointer rounded-md border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium uppercase tracking-wide text-zinc-300 transition-all hover:bg-white/10 hover:text-white"
             onClick={onClose}
           >
@@ -65,7 +66,7 @@ export default function SaveSuccessModal({
           </Link>
 
           <Link
-            href={`/viewer/${configId}`}
+            href={`${ROUTS.VIEWER_ROUTE}/${configId}`}
             className="text-center cursor-pointer rounded-md border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium uppercase tracking-wide text-zinc-300 transition-all hover:bg-white/10 hover:text-white"
             onClick={onClose}
           >
@@ -73,7 +74,7 @@ export default function SaveSuccessModal({
           </Link>
 
           <Link
-            href={`/customizer/${modelSlug}`}
+            href={`${ROUTS.CUSTOMIZER_ROUTE}/${modelSlug}`}
             className="text-center cursor-pointer rounded-md border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium uppercase tracking-wide text-zinc-300 transition-all hover:bg-white/10 hover:text-white"
             onClick={onClose}
           >

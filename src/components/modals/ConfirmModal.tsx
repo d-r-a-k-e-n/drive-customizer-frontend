@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 interface IConfirmModalProps {
   isOpen: boolean;
   title: string;
@@ -27,18 +29,12 @@ export default function ConfirmModal({
         </h2>
         <p className="mb-6 text-sm text-zinc-400">{message}</p>
         <div className="flex justify-end gap-3">
-          <button
-            className="cursor-pointer rounded-md border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-wide text-zinc-300 transition-all hover:bg-white/10 hover:text-white"
-            onClick={onCancel}
-          >
+          <Button variant="default" onClick={onCancel}>
             {cancelLabel}
-          </button>
-          <button
-            className="cursor-pointer rounded-md border border-red-500/30 bg-red-500/10 px-4 py-1.5 text-xs font-medium uppercase tracking-wide text-red-300 transition-all hover:bg-red-500/20 hover:text-red-200"
-            onClick={onConfirm}
-          >
+          </Button>
+          <Button variant="destructive" onClick={onConfirm}>
             {confirmLabel}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
