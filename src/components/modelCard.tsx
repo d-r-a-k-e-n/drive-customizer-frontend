@@ -7,9 +7,11 @@ export default function ModelCard({
   link,
 }: {
   name: string;
-  img: string | StaticImageData;
+  img?: string | StaticImageData;
   link: string;
 }) {
+  const fallbackImage = "/no-image.png";
+
   return (
     <Link
       href={link}
@@ -18,7 +20,7 @@ export default function ModelCard({
       <div className="aspect-[16/9] bg-gradient-to-br from-zinc-800 to-black  flex items-center justify-center">
         <div className="relative aspect-[16/9] w-full overflow-hidden">
           <Image
-            src={img}
+            src={img || fallbackImage}
             alt={name}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-104"
