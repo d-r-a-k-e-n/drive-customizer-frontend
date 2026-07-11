@@ -118,7 +118,7 @@ export default function HomePage() {
           </div>
           <div className="order-1 md:order-2 relative aspect-square rounded-[40px] overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/30 via-transparent to-transparent z-10"></div>
-            <Canvas shadows camera={{ position: [0, 0, 10], fov: 35 }}>
+            <Canvas shadows camera={{ position: [100, 100, 100], fov: 35 }}>
               <Suspense fallback={null}>
                 <Stage intensity={0.6}>
                   <CarModel modelUrl={"/models/lotus.glb"} />
@@ -127,7 +127,7 @@ export default function HomePage() {
               <OrbitControls
                 enableZoom={false}
                 autoRotate
-                autoRotateSpeed={0.4}
+                autoRotateSpeed={0.5}
                 maxPolarAngle={Math.PI / 2}
                 minPolarAngle={Math.PI / 2.5}
               />
