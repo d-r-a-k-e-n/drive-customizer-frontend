@@ -26,19 +26,14 @@ export function useCustomizerModel() {
   const [showScene, setShowScene] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const {
-    modelId,
-    thumbnailUrl,
-    backgroundColor: storedBackgroundColor,
-    setModelStore,
-    resetModelStore,
-  } = useModelConfigStore((store) => store);
+  const { modelId, thumbnailUrl, setModelStore, resetModelStore } =
+    useModelConfigStore((store) => store);
 
   const [
     { backgroundColor, paintColor, intensity, envIntensity },
     setControls,
   ] = useControls(() => ({
-    backgroundColor: storedBackgroundColor || BACKGROUND_COLOR,
+    backgroundColor: BACKGROUND_COLOR,
     paintColor: "#b7b7b7",
     intensity: { value: 0.5, min: 0.1, max: 2, step: 0.1 },
     envIntensity: { value: 0.5, min: 0, max: 1, step: 0.1 },
@@ -63,6 +58,9 @@ export function useCustomizerModel() {
   }, [backgroundColor, setModelStore]);
 
   useEffect(() => {
+    resetModelStore();
+    setControls({ backgroundColor: BACKGROUND_COLOR });
+
     async function loadModel(): Promise<void> {
       const catalogItem = await catalogService.getBySlug(modelSlug);
       setModelUrl(catalogItem.modelUrl);
@@ -74,11 +72,10 @@ export function useCustomizerModel() {
         backgroundColor: BACKGROUND_COLOR,
         config: [],
       });
-      setControls({ backgroundColor: BACKGROUND_COLOR });
     }
 
     loadModel();
-  }, [modelSlug, setModelStore, setControls]);
+  }, [modelSlug, setModelStore, setControls, resetModelStore]);
 
   function handleResetConfirm() {
     resetModelStore();

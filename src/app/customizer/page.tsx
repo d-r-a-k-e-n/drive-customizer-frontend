@@ -7,12 +7,19 @@ import { ROUTS } from "@/consts/routs.const";
 import ModelCard from "@/components/modelCard";
 import Pagination from "@/components/ui/pagination";
 import { PAGE_SIZE } from "@/consts/pageSize";
+import { useModelConfigStore } from "@/store/modelConfig.store";
 
 export default function CustomizerPage() {
   const [catalogItems, setCatalogItems] = useState<ICatalog[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const resetModelStore = useModelConfigStore((state) => state.resetModelStore);
+
+  useEffect(() => {
+    resetModelStore();
+    localStorage.removeItem("model-config");
+  }, [resetModelStore]);
 
   useEffect(() => {
     async function fetchData(): Promise<void> {

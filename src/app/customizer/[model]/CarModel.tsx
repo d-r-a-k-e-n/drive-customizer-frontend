@@ -1,10 +1,27 @@
 import { useState, useEffect, useMemo } from "react";
 import { type ThreeEvent } from "@react-three/fiber";
 import { Center, useGLTF } from "@react-three/drei";
-import { Mesh, MeshStandardMaterial } from "three";
+import { Color, Group, Mesh, MeshStandardMaterial } from "three";
 import { useModelConfigStore } from "@/store/modelConfig.store";
 import { type IModelConfigItem } from "@/types/modelConfig.types";
 import { BACKGROUND_COLOR } from "@/consts/backgroundColor.const";
+
+const pristineMeshColors = new Map<string, Map<string, Color>>();
+
+function capturePristineColors(modelUrl: string, scene: Group) {
+  if (pristineMeshColors.has(modelUrl)) return;
+
+  const colorsMap = new Map<string, Color>();
+  scene.traverse((object) => {
+    if (
+      object instanceof Mesh &&
+      object.material instanceof MeshStandardMaterial
+    ) {
+      colorsMap.set(object.name, object.material.color.clone());
+    }
+  });
+  pristineMeshColors.set(modelUrl, colorsMap);
+}
 
 interface ICarModelProps {
   modelUrl: string;
@@ -19,26 +36,18 @@ export default function CarModel({
   config: configProp,
   readOnly = false,
 }: ICarModelProps) {
-  const { scene } = useGLTF(modelUrl);
+  const { scene: cachedScene } = useGLTF(modelUrl);
 
-  const { setModelStore, config: storeConfig } = useModelConfigStore(
-    (state) => state,
-  );
+  const scene = useMemo(() => {
+    capturePristineColors(modelUrl, cachedScene);
+    return cachedScene.clone(true);
+  }, [cachedScene, modelUrl]);
+
+  const originalColors = pristineMeshColors.get(modelUrl)!;
+  const { setModelStore } = useModelConfigStore((state) => state);
+  const storeConfig = useModelConfigStore((state) => state.config);
   const config = configProp ?? storeConfig;
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-
-  const originalColors = useMemo(() => {
-    const colorsMap = new Map<string, MeshStandardMaterial["color"]>();
-    scene.traverse((object) => {
-      if (
-        object instanceof Mesh &&
-        object.material instanceof MeshStandardMaterial
-      ) {
-        colorsMap.set(object.name, object.material.color.clone());
-      }
-    });
-    return colorsMap;
-  }, [scene]);
 
   useEffect(() => {
     scene.traverse((object) => {

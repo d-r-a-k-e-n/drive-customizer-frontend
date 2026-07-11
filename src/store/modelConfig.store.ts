@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { BACKGROUND_COLOR } from "@/consts/backgroundColor.const";
 import { type IModelConfigItem } from "@/types/modelConfig.types";
 
@@ -25,21 +24,9 @@ const initialState: IModelConfigInitialStore = {
   config: [],
 };
 
-export const useModelConfigStore = create<IModelConfigStore>()(
-  persist(
-    (set, get) => ({
-      ...initialState,
-      setModelStore: (data) => set((state) => ({ ...state, ...data })),
-      resetModelStore: () =>
-        set((state) => ({
-          ...state,
-          backgroundColor: BACKGROUND_COLOR,
-          config: [],
-        })),
-      getModelStore: () => get().config,
-    }),
-    {
-      name: "model-config",
-    },
-  ),
-);
+export const useModelConfigStore = create<IModelConfigStore>()((set, get) => ({
+  ...initialState,
+  setModelStore: (data) => set((state) => ({ ...state, ...data })),
+  resetModelStore: () => set(initialState),
+  getModelStore: () => get().config,
+}));
