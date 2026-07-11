@@ -10,7 +10,7 @@ export default function SiteNav() {
       >
         Drive<span className="text-blue-600">.</span>
       </Link>
-      <div className="hidden md:flex gap-10 text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+      <div className="flex gap-4 md:gap-10 text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-400">
         <Link
           href={ROUTS.MAIN_ROUTE}
           className="hover:text-white transition-colors"

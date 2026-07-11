@@ -8,4 +8,14 @@ export interface ICatalog {
 
 export interface ICatalogResponse {
   data: ICatalog[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+export interface ICatalogSingleResponse {
+  data: ICatalog;
 }

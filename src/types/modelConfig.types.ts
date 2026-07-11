@@ -15,10 +15,17 @@ export interface IModelConfig extends ICreateModelConfig {
   _id: string;
   createdAt?: string;
   updatedAt?: string;
+  previewUrl?: string;
 }
 
 export interface IModelConfigResponse {
   data: IModelConfig[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 export interface IModelConfigSingleResponse {

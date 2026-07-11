@@ -13,6 +13,7 @@ import ModelCard from "@/components/modelCard";
 import { FEATURES } from "@/consts/features.const";
 import type { IModelConfig } from "@/types/modelConfig.types";
 import { modelConfigService } from "@/services/modelConfigs.services";
+import { PAGE_SIZE } from "@/consts/pageSize";
 
 useGLTF.preload("/models/lotus.glb");
 
@@ -20,34 +21,19 @@ export default function HomePage() {
   const [catalogItems, setCatalogItems] = useState<ICatalog[]>([]);
   useEffect(() => {
     async function fetchData(): Promise<void> {
-      const catalogList: ICatalog[] = await catalogService.getAll();
+      const { data: catalogList } = await catalogService.getAll(1, PAGE_SIZE);
       setCatalogItems(catalogList);
     }
 
     fetchData();
   }, []);
 
-  const [customizedModels, setCustomizedModels] = useState<
-    (IModelConfig & { previewUrl?: string })[]
-  >([]);
+  const [customizedModels, setCustomizedModels] = useState<IModelConfig[]>([]);
 
   useEffect(() => {
     async function fetchCustomizedModels(): Promise<void> {
-      const [configs, catalogItems] = await Promise.all([
-        modelConfigService.getAll(),
-        catalogService.getAll(),
-      ]);
-
-      const catalogById = new Map<string, ICatalog>(
-        catalogItems.map((item) => [item._id, item]),
-      );
-
-      const modelsWithPreview = configs.map((config) => ({
-        ...config,
-        previewUrl: catalogById.get(config.modelId)?.previewUrl,
-      }));
-
-      setCustomizedModels(modelsWithPreview);
+      const { data: configs } = await modelConfigService.getAll(1, PAGE_SIZE);
+      setCustomizedModels(configs);
     }
 
     fetchCustomizedModels();
@@ -56,31 +42,6 @@ export default function HomePage() {
   return (
     <main className="bg-[#050505] text-white selection:bg-blue-600/30 font-sans">
       <section className="relative flex items-center justify-center overflow-hidden">
-        {/* 3D Scene Background */}
-        {/*<div className="absolute inset-0 z-0">*/}
-        {/*    <Canvas shadows camera={{ position: [0, 0, 10], fov: 35 }}>*/}
-        {/*        <Suspense fallback={null}>*/}
-        {/*            <Stage*/}
-        {/*                intensity={0.6}*/}
-        {/*            >*/}
-        {/*                <CarModel modelUrl={'/models/lotus.glb'}/>*/}
-        {/*            </Stage>*/}
-
-        {/*        </Suspense>*/}
-        {/*        <OrbitControls*/}
-        {/*            enableZoom={false}*/}
-        {/*            autoRotate*/}
-        {/*            autoRotateSpeed={0.4}*/}
-        {/*            maxPolarAngle={Math.PI / 2}*/}
-        {/*            minPolarAngle={Math.PI / 2.5}*/}
-        {/*        />*/}
-        {/*    </Canvas>*/}
-        {/*</div>*/}
-
-        {/*/!* ГРАДІЄНТНЕ ЗАТЕМНЕННЯ поверх машинки *!/*/}
-        {/*<div className="absolute inset-0 z-[1] bg-gradient-to-b from-[#050505] via-transparent to-[#050505] opacity-80 pointer-events-none"></div>*/}
-        {/*<div className="absolute inset-0 z-[1] bg-[radial-gradient(circle_at_center,transparent_0%,#050505_100%)] opacity-60 pointer-events-none"></div>*/}
-
         <div className="relative z-10 text-center px-4 mt-20">
           <p className="text-blue-500 font-bold tracking-[0.4em] uppercase text-[10px] mb-4 block">
             Engineered for perfection

@@ -41,9 +41,8 @@ export default function ViewerModelPage() {
 
         setModelConfig(savedConfig);
 
-        const catalogItems = await catalogService.getAll();
-        const catalogItem = catalogItems.find(
-          (item) => item._id === String(savedConfig.modelId),
+        const catalogItem = await catalogService.getById(
+          String(savedConfig.modelId),
         );
 
         if (!catalogItem) {

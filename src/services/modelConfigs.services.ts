@@ -5,14 +5,21 @@ import {
   type IModelConfigResponse,
   type IModelConfigSingleResponse,
 } from "@/types/modelConfig.types";
+import { type IPaginatedResponse } from "@/types/pagination.types";
+import { PAGE_SIZE } from "@/consts/pageSize";
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/model-configs`;
 
 export const modelConfigService = {
-  getAll: async (): Promise<IModelConfig[]> => {
+  getAll: async (
+    page = 1,
+    limit = PAGE_SIZE,
+  ): Promise<IPaginatedResponse<IModelConfig>> => {
     try {
-      const response = await axios.get<IModelConfigResponse>(BASE_URL);
-      return response.data.data;
+      const response = await axios.get<IModelConfigResponse>(BASE_URL, {
+        params: { page, limit },
+      });
+      return response.data;
     } catch (error) {
       console.error("Unexpected Error:", error);
       throw new Error("Error");
