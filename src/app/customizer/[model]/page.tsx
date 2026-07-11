@@ -14,12 +14,14 @@ import { type WebGLRenderer } from "three";
 import { catalogService } from "@/services/catalog.service";
 import { modelConfigService } from "@/services/modelConfigs.services";
 import CarModel from "@/app/customizer/[model]/CarModel";
-import ConfirmModal from "@/components/modals/ConfirmModal";
-import SaveConfigModal from "@/components/modals/SaveConfigModal";
-import SaveSuccessModal from "@/components/modals/SaveSuccessModal";
+import ConfirmModal from "@/components/modals/confirmModal";
+import SaveConfigModal from "@/components/modals/saveConfigModal";
+import SaveSuccessModal from "@/components/modals/saveSuccessModal";
 import { useModelConfigStore } from "@/store/modelConfig.store";
 import { BACKGROUND_COLOR } from "@/consts/backgroundColor.const";
 import { Button } from "@/components/ui/button";
+import { ROUTS } from "@/consts/routs.const";
+import Link from "next/link";
 
 export default function CustomizerModelPage() {
   const params = useParams();
@@ -179,6 +181,9 @@ export default function CustomizerModelPage() {
       </Canvas>
 
       <div className="absolute top-4 left-8 flex items-center gap-4">
+        <Link href={ROUTS.CUSTOMIZER_ROUTE}>
+          <Button variant="default">back</Button>
+        </Link>
         <Button
           variant="default"
           onClick={handleSaveClick}

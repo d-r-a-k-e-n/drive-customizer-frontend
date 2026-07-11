@@ -1,13 +1,12 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { catalogService } from "@/services/catalog.service";
 import { modelConfigService } from "@/services/modelConfigs.services";
 import { type ICatalog } from "@/types/catalog.types";
 import { type IModelConfig } from "@/types/modelConfig.types";
 import { ROUTS } from "@/consts/routs.const";
+import ModelCard from "@/components/modelCard";
 
 export default function ViewerPage() {
   const [customizedModels, setCustomizedModels] = useState<
@@ -43,9 +42,9 @@ export default function ViewerPage() {
 
   return (
     <div className="flex flex-1 font-sans justify-center">
-      <main className="flex w-full max-w-5xl flex-col items-center">
-        <h1 className="mb-6 uppercase font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-center md:text-left">
-          Customized models
+      <main className="flex mt-6 mb-32 w-full max-w-5xl flex-col items-center">
+        <h1 className="mb-12 uppercase font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tighter text-center">
+          <span className="text-blue-600">Customized</span> models
         </h1>
 
         {isLoading && (
@@ -60,26 +59,14 @@ export default function ViewerPage() {
           </p>
         )}
 
-        <div className="grid pb-6 px-6 p-10 w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {customizedModels.map(({ _id, name, previewUrl }) => (
-            <Link key={_id} href={`${ROUTS.VIEWER_ROUTE}/${_id}`}>
-              <article className="overflow-hidden rounded-lg border border-white/10 bg-white/5 transition-all hover:border-white/20 hover:bg-white/10">
-                {previewUrl ? (
-                  <Image
-                    className="h-48 w-full object-cover"
-                    src={previewUrl}
-                    alt={name}
-                    width={400}
-                    height={200}
-                  />
-                ) : (
-                  <div className="flex h-48 w-full items-center justify-center text-xs uppercase tracking-wide text-zinc-400">
-                    No preview
-                  </div>
-                )}
-                <h2 className="p-4 text-lg font-semibold uppercase">{name}</h2>
-              </article>
-            </Link>
+            <ModelCard
+              key={_id}
+              name={name}
+              img={previewUrl}
+              link={`${ROUTS.VIEWER_ROUTE}/${_id}`}
+            />
           ))}
         </div>
       </main>

@@ -15,6 +15,7 @@ import { catalogService } from "@/services/catalog.service";
 import { modelConfigService } from "@/services/modelConfigs.services";
 import { type IModelConfig } from "@/types/modelConfig.types";
 import { ROUTS } from "@/consts/routs.const";
+import { Button } from "@/components/ui/button";
 
 const LIGHT_INTENSITY = 0.5;
 const ENV_INTENSITY = 0.5;
@@ -130,11 +131,8 @@ export default function ViewerModelPage() {
       </Canvas>
 
       <div className="absolute top-4 left-8 flex flex-col gap-2">
-        <Link
-          href={ROUTS.VIEWER_ROUTE}
-          className="cursor-pointer rounded-md border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-wide text-zinc-300 backdrop-blur-md transition-all hover:bg-white/10 hover:text-white"
-        >
-          back
+        <Link href={ROUTS.VIEWER_ROUTE}>
+          <Button variant="default">back</Button>
         </Link>
         <span className="text-xs uppercase tracking-wide text-zinc-400">
           {modelConfig.name} - view only
