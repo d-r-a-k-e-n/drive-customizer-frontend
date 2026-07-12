@@ -8,6 +8,16 @@ import { BACKGROUND_COLOR } from "@/consts/backgroundColor.const";
 
 const pristineMeshColors = new Map<string, Map<string, Color>>();
 
+function cloneSceneMaterials(scene: Group) {
+  scene.traverse((object) => {
+    if (object instanceof Mesh && object.material) {
+      object.material = Array.isArray(object.material)
+        ? object.material.map((material) => material.clone())
+        : object.material.clone();
+    }
+  });
+}
+
 function capturePristineColors(modelUrl: string, scene: Group) {
   if (pristineMeshColors.has(modelUrl)) return;
 
@@ -39,8 +49,10 @@ export default function CarModel({
   const { scene: cachedScene } = useGLTF(modelUrl);
 
   const scene = useMemo(() => {
-    capturePristineColors(modelUrl, cachedScene);
-    return cachedScene.clone(true);
+    const clonedScene = cachedScene.clone(true);
+    cloneSceneMaterials(clonedScene);
+    capturePristineColors(modelUrl, clonedScene);
+    return clonedScene;
   }, [cachedScene, modelUrl]);
 
   const originalColors = pristineMeshColors.get(modelUrl)!;
